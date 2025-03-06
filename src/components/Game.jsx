@@ -43,11 +43,20 @@ const Game = () => {
     <MobilePauseButton onPause={pauseGame} />
   )}
 
-  // Detect mobile devices
+  // Improved mobile detection function
+const isMobileDevice = () => {
+  // Check for touch device first
+  if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+    // Then check user agent to exclude tablets in desktop mode
+    const ua = navigator.userAgent;
+    return /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  }
+  return false;
+};
+
   useEffect(() => {
     const checkMobile = () => {
-      const ua = navigator.userAgent;
-      setIsMobile(/iPhone|iPad|iPod|Android/i.test(ua));
+      setIsMobile(isMobileDevice());
     };
     
     checkMobile();
@@ -206,6 +215,11 @@ const Game = () => {
         camera={camera}
         setCamera={setCamera}
       />
+
+         {/* Mobile pause button - make sure this is here */}
+      {isMobile && gameState === 'playing' && (
+        <MobilePauseButton onPause={() => setGameState('paused')} />
+      )}
         
         {gameState === 'menu' && (
           <MainMenu onStartGame={startGame} />

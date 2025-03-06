@@ -171,6 +171,8 @@ const GameCanvas = ({
     if (canvas) {
       canvas.addEventListener('wheel', handleWheel);
     }
+
+    
     
     // Initialize the game engine
     if (canvas && gameState === 'playing') {
@@ -332,7 +334,13 @@ const GameCanvas = ({
       <canvas 
         ref={canvasRef} 
         className="bg-gray-800 rounded-lg shadow-lg" 
-        style={{ touchAction: 'none' }} // Prevents default touch actions for better mobile experience
+        style={{ 
+          touchAction: 'none',
+          WebkitUserSelect: 'none',
+          WebkitTouchCallout: 'none',
+          msUserSelect: 'none',
+          userSelect: 'none'
+        }}  // Prevents default touch actions for better mobile experience
       />
       
       {/* Zoom controls (always shown on desktop) */}

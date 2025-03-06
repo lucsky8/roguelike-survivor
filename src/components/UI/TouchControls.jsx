@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const TouchControls = ({ onDirectionChange, onZoomIn, onZoomOut }) => {
   const joystickRef = useRef(null);
@@ -11,8 +11,60 @@ const TouchControls = ({ onDirectionChange, onZoomIn, onZoomOut }) => {
   const [controlsVisible, setControlsVisible] = useState(true);
   const hideControlsTimerRef = useRef(null);
   
+  // Define processJoystickPosition with useCallback to avoid recreation
+  const processJoystickPosition = useCallback((touchX, touchY, centerX, centerY, radius) => {
+    // Calculate distance from center
+    const deltaX = touchX - centerX;
+    const deltaY = touchY - centerY;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    
+    // Normalize to keep within joystick bounds
+    let normalizedX = deltaX;
+    let normalizedY = deltaY;
+    
+    if (distance > radius) {
+      normalizedX = (deltaX / distance) * radius;
+      normalizedY = (deltaY / distance) * radius;
+    }
+    
+    // Update joystick position
+    setJoystickPosition({
+      x: normalizedX,
+      y: normalizedY
+    });
+    
+    // Determine direction
+    const angle = Math.atan2(normalizedY, normalizedX);
+    const angleDegrees = (angle * 180) / Math.PI;
+    
+    // Only send direction when it changes
+    let newDirection = null;
+    
+    // Simple 4-way direction
+    if (distance > radius * 0.3) { // Add a small deadzone
+      if (angleDegrees > -45 && angleDegrees <= 45) {
+        newDirection = 'right';
+      } else if (angleDegrees > 45 && angleDegrees <= 135) {
+        newDirection = 'down';
+      } else if (angleDegrees > 135 || angleDegrees <= -135) {
+        newDirection = 'left';
+      } else {
+        newDirection = 'up';
+      }
+    }
+    
+    // Only update if direction changed
+    if (newDirection !== currentDirection) {
+      setCurrentDirection(newDirection);
+      
+      if (onDirectionChange) {
+        onDirectionChange(newDirection);
+      }
+    }
+  }, [currentDirection, onDirectionChange]);
+  
   // Reset hide timer whenever the user touches the screen
-  const resetHideTimer = () => {
+  const resetHideTimer = useCallback(() => {
     if (hideControlsTimerRef.current) {
       clearTimeout(hideControlsTimerRef.current);
     }
@@ -24,7 +76,7 @@ const TouchControls = ({ onDirectionChange, onZoomIn, onZoomOut }) => {
         setControlsVisible(false);
       }
     }, 3000); // Hide after 3 seconds of inactivity
-  };
+  }, [touching]);
   
   // Set up joystick touch handlers
   useEffect(() => {
@@ -93,59 +145,7 @@ const TouchControls = ({ onDirectionChange, onZoomIn, onZoomOut }) => {
         clearTimeout(hideControlsTimerRef.current);
       }
     };
-  }, [onDirectionChange, touching, processJoystickPosition, resetHideTimer]);
-  
-  // Process joystick position and determine direction
-  const processJoystickPosition = (touchX, touchY, centerX, centerY, radius) => {
-    // Calculate distance from center
-    const deltaX = touchX - centerX;
-    const deltaY = touchY - centerY;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    
-    // Normalize to keep within joystick bounds
-    let normalizedX = deltaX;
-    let normalizedY = deltaY;
-    
-    if (distance > radius) {
-      normalizedX = (deltaX / distance) * radius;
-      normalizedY = (deltaY / distance) * radius;
-    }
-    
-    // Update joystick position
-    setJoystickPosition({
-      x: normalizedX,
-      y: normalizedY
-    });
-    
-    // Determine direction
-    const angle = Math.atan2(normalizedY, normalizedX);
-    const angleDegrees = (angle * 180) / Math.PI;
-    
-    // Only send direction when it changes
-    let newDirection = null;
-    
-    // Simple 4-way direction
-    if (distance > radius * 0.3) { // Add a small deadzone
-      if (angleDegrees > -45 && angleDegrees <= 45) {
-        newDirection = 'right';
-      } else if (angleDegrees > 45 && angleDegrees <= 135) {
-        newDirection = 'down';
-      } else if (angleDegrees > 135 || angleDegrees <= -135) {
-        newDirection = 'left';
-      } else {
-        newDirection = 'up';
-      }
-    }
-    
-    // Only update if direction changed
-    if (newDirection !== currentDirection) {
-      setCurrentDirection(newDirection);
-      
-      if (onDirectionChange) {
-        onDirectionChange(newDirection);
-      }
-    }
-  };
+  }, [touching, processJoystickPosition, resetHideTimer]);
   
   // Handle touch activation for the document
   useEffect(() => {
@@ -158,7 +158,7 @@ const TouchControls = ({ onDirectionChange, onZoomIn, onZoomOut }) => {
     return () => {
       document.removeEventListener('touchstart', handleDocumentTouch);
     };
-  }, []);
+  }, [resetHideTimer]);
   
   return (
     <div className={`touch-controls ${controlsVisible ? 'visible' : 'hidden'}`}>
@@ -275,9 +275,10 @@ const TouchControls = ({ onDirectionChange, onZoomIn, onZoomOut }) => {
           background: rgba(100, 0, 0, 0.5);
         }
         
-        @media (min-width: 768px) {
+         /* We need to change this media query to ensure touch controls show on iPad */
+        @media (hover: hover) and (pointer: fine) {
           .touch-controls {
-            display: none; /* Hide on desktop/larger screens */
+            display: none; /* Hide only on true desktop devices with mouse/pointer */
           }
         }
       `}</style>
