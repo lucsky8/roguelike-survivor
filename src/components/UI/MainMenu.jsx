@@ -79,7 +79,7 @@ const MainMenu = ({ onStartGame }) => {
       <div className="menu-border" />
 
       <div className="menu-content">
-        <h1 className="game-title">Roguelike Survivor new</h1>
+        <h1 className="game-title">Roguelike Survivor Siku</h1>
         <p className="menu-subtitle">Survive against endless waves of enemies!</p>
 
         {/* Play button */}
