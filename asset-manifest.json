@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/roguelike-survivor/static/css/main.8b461f0e.css",
+    "main.js": "/roguelike-survivor/static/js/main.cc58166c.js",
+    "static/js/453.ab1afe57.chunk.js": "/roguelike-survivor/static/js/453.ab1afe57.chunk.js",
+    "index.html": "/roguelike-survivor/index.html",
+    "main.8b461f0e.css.map": "/roguelike-survivor/static/css/main.8b461f0e.css.map",
+    "main.cc58166c.js.map": "/roguelike-survivor/static/js/main.cc58166c.js.map",
+    "453.ab1afe57.chunk.js.map": "/roguelike-survivor/static/js/453.ab1afe57.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8b461f0e.css",
+    "static/js/main.cc58166c.js"
+  ]
+}
