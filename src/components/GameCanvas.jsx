@@ -195,9 +195,14 @@ const GameCanvas = ({
         cancelAnimationFrame(animationFrameRef.current);
       }
       
-      if (stageMessageTimerRef.current) {
-        clearTimeout(stageMessageTimerRef.current);
-      }
+      //if (stageMessageTimerRef.current) {
+        //clearTimeout(stageMessageTimerRef.current);
+      //}
+      // Fixed version - capture the current value in a variable
+    const timerRef = stageMessageTimerRef.current;
+    if (timerRef) {
+      clearTimeout(timerRef);
+    }
     };
   }, [gameState, setGameState, setCamera]);
 
@@ -303,8 +308,8 @@ const GameCanvas = ({
     gameState, playerStats, level, stage, stageMessage,
     showStageMessage, time, score, experience, experienceToNextLevel,
     upgrades, setGameState, setPlayerStats, setStage, setStageMessage,
-    setShowStageMessage, setTime, setScore, setExperience, setLevel,
-    onLevelUp, camera // Add camera to dependencies
+    setShowStageMessage, setTime, setScore, setExperience, setLevel,setExperienceToNextLevel,
+    onLevelUp, camera, setCamera  // Add camera to dependencies
   ]);
 
   // Handle touch-specific zoom actions

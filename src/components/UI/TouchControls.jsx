@@ -93,7 +93,7 @@ const TouchControls = ({ onDirectionChange, onZoomIn, onZoomOut }) => {
         clearTimeout(hideControlsTimerRef.current);
       }
     };
-  }, [onDirectionChange, touching]);
+  }, [onDirectionChange, touching, processJoystickPosition, resetHideTimer]);
   
   // Process joystick position and determine direction
   const processJoystickPosition = (touchX, touchY, centerX, centerY, radius) => {

@@ -38,6 +38,11 @@ const Game = () => {
     zoomSpeed: 0.05,       // How quickly zoom changes
   });
 
+  // Inside the component, add:
+  {isMobile && gameState === 'playing' && (
+    <MobilePauseButton onPause={pauseGame} />
+  )}
+
   // Detect mobile devices
   useEffect(() => {
     const checkMobile = () => {

@@ -126,6 +126,9 @@ export const applyWeaponUpgrade = (player, upgradeId) => {
         newWeapon.targetCount = 3; // Number of targets hit
         newWeapon.damage = 30;
         break;
+      default:
+          // Default case
+          break;
     }
     
     player.weapons.push(newWeapon);
