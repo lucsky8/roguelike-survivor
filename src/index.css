@@ -1,5 +1,11 @@
+/* Add these styles to your CSS file */
+
+
 body {
   margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #0a0a0a;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -7,7 +13,306 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Pixel font class (if not already defined) */
+.font-pixel {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  image-rendering: pixelated;
+}
+
+/* Enhanced glow effect for the title */
+.game-title {
+  text-shadow: 0 0 10px rgba(220, 38, 38, 0.7),
+               0 0 20px rgba(220, 38, 38, 0.5),
+               0 0 30px rgba(220, 38, 38, 0.3),
+               0 0 40px rgba(220, 38, 38, 0.1);
+  animation: pulse 3s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    text-shadow: 0 0 10px rgba(220, 38, 38, 0.7),
+                 0 0 20px rgba(220, 38, 38, 0.5);
+  }
+  100% {
+    text-shadow: 0 0 15px rgba(220, 38, 38, 0.9),
+                 0 0 25px rgba(220, 38, 38, 0.7),
+                 0 0 35px rgba(220, 38, 38, 0.5),
+                 0 0 45px rgba(220, 38, 38, 0.3);
+  }
+}
+
+/* Glitch effect for title */
+.glitch-effect {
+  position: relative;
+  animation: glitch 0.15s infinite;
+}
+
+.glitch-effect::before,
+.glitch-effect::after {
+  content: "Roguelike Survivor";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-effect::before {
+  left: 2px;
+  text-shadow: -1px 0 #00ffff;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+
+.glitch-effect::after {
+  left: -2px;
+  text-shadow: 1px 0 #ff00ff;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim2 5s infinite linear alternate-reverse;
+}
+
+/* Simple red glow for the title */
+.glow-red {
+  text-shadow: 0 0 10px rgba(220, 38, 38, 0.7),
+               0 0 20px rgba(220, 38, 38, 0.5),
+               0 0 30px rgba(220, 38, 38, 0.3);
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip: rect(31px, 9999px, 94px, 0);
+  }
+  10% {
+    clip: rect(112px, 9999px, 76px, 0);
+  }
+  20% {
+    clip: rect(85px, 9999px, 77px, 0);
+  }
+  30% {
+    clip: rect(27px, 9999px, 97px, 0);
+  }
+  40% {
+    clip: rect(64px, 9999px, 98px, 0);
+  }
+  50% {
+    clip: rect(61px, 9999px, 85px, 0);
+  }
+  60% {
+    clip: rect(99px, 9999px, 114px, 0);
+  }
+  70% {
+    clip: rect(34px, 9999px, 115px, 0);
+  }
+  80% {
+    clip: rect(98px, 9999px, 129px, 0);
+  }
+  90% {
+    clip: rect(43px, 9999px, 96px, 0);
+  }
+  100% {
+    clip: rect(82px, 9999px, 64px, 0);
+  }
+}
+
+@keyframes glitch-anim2 {
+  0% {
+    clip: rect(125px, 9999px, 162px, 0);
+  }
+  10% {
+    clip: rect(120px, 9999px, 147px, 0);
+  }
+  20% {
+    clip: rect(113px, 9999px, 171px, 0);
+  }
+  30% {
+    clip: rect(123px, 9999px, 153px, 0);
+  }
+  40% {
+    clip: rect(117px, 9999px, 148px, 0);
+  }
+  50% {
+    clip: rect(124px, 9999px, 151px, 0);
+  }
+  60% {
+    clip: rect(121px, 9999px, 155px, 0);
+  }
+  70% {
+    clip: rect(129px, 9999px, 139px, 0);
+  }
+  80% {
+    clip: rect(116px, 9999px, 159px, 0);
+  }
+  90% {
+    clip: rect(128px, 9999px, 144px, 0);
+  }
+  100% {
+    clip: rect(118px, 9999px, 149px, 0);
+  }
+}
+
+/* Button hover animation */
+@keyframes buttonGlow {
+  0% {
+    box-shadow: 0 0 5px rgba(220, 38, 38, 0.5), 
+                0 0 10px rgba(220, 38, 38, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.7), 
+                0 0 20px rgba(220, 38, 38, 0.5),
+                0 0 30px rgba(220, 38, 38, 0.3);
+  }
+}
+
+button:hover {
+  animation: buttonGlow 1.5s infinite alternate;
+}
+
+
+/* Add these to your index.css file */
+
+/* Enhanced pixel font style */
+.pixel-font {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-rendering: optimizeSpeed;
+}
+
+/* Button glow animation */
+@keyframes buttonPulse {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 60, 60, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 60, 60, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 60, 60, 0.5);
+  }
+}
+
+button:hover {
+  animation: buttonPulse 2s infinite;
+  transform: translateY(-2px);
+}
+
+/* Title glow animations */
+@keyframes titleGlow {
+  0% {
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.4);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.6), 0 0 45px rgba(255, 0, 0, 0.4);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.6), 0 0 20px rgba(255, 0, 0, 0.4);
+  }
+}
+
+.game-title {
+  animation: titleGlow 3s infinite;
+}
+
+
+/* Pixelated button styles */
+.pixel-button-container {
+  margin-bottom: 32px;
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 500px;
+}
+
+/* Add these styles to your index.css file */
+
+/* Simplified pixelated button styles */
+.pixel-button {
+  display: inline-block;
+  width: 180px;
+  height: 60px;
+  background-color: #229FE3; /* Blue color */
+  border: 4px solid #104E70; /* Dark blue border */
+  box-shadow: 
+    inset -4px -4px 0 0 #59C1F2,
+    inset 4px 4px 0 0 #104E70;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+}
+
+.pixel-button:hover {
+  transform: translateY(-4px);
+  filter: brightness(1.1);
+}
+
+.pixel-button:active {
+  transform: translateY(2px);
+  filter: brightness(0.9);
+}
+
+.pixel-button-text {
+  display: block;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  color: #7A0025; /* Dark red color for text */
+  font-size: 28px;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0 #104E70;
+  line-height: 60px; /* Centers text vertically */
+}
+
+/* Pixelated controls boxes */
+.pixel-control-box {
+  background-color: #333;
+  border: 2px solid #555;
+  padding: 8px 16px;
+  box-shadow: 
+    inset -2px -2px 0 0 #222,
+    inset 2px 2px 0 0 #666;
+}
+
+/* Title glow */
+.game-title {
+  color: #ff5555;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.7),
+               0 0 20px rgba(255, 0, 0, 0.5);
+}
+
+
+
+/* index.css */
+.upgrade-menu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
 }
