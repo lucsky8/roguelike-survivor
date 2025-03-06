@@ -1,7 +1,7 @@
-// Add these imports if they're not already present
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { playerInit } from '../game/entities/player';
 import { initGameEngine, updateGame, renderGame } from '../game/engine';
+import TouchControls from './UI/TouchControls';
 
 const GameCanvas = ({
   gameState, setGameState,
@@ -26,6 +26,9 @@ const GameCanvas = ({
   // Stage message timer reference
   const stageMessageTimerRef = useRef(null);
   
+  // State to track if we're on a mobile device
+  const [isMobile, setIsMobile] = useState(false);
+  
   // Game data reference
   const gameDataRef = useRef({
     player: playerInit(),
@@ -41,10 +44,55 @@ const GameCanvas = ({
     camera: camera // Include camera in game data
   });
   
+  // Detect mobile devices on component mount
+  useEffect(() => {
+    const checkMobile = () => {
+      const ua = navigator.userAgent;
+      setIsMobile(/iPhone|iPad|iPod|Android/i.test(ua));
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+  
   // Update game data ref when camera changes
   useEffect(() => {
     gameDataRef.current.camera = camera;
   }, [camera]);
+  
+  // Handle touch direction change
+  const handleTouchDirectionChange = (direction) => {
+    const keysPressed = gameDataRef.current.keysPressed;
+    
+    // Reset all direction keys first
+    keysPressed['w'] = false;
+    keysPressed['a'] = false;
+    keysPressed['s'] = false;
+    keysPressed['d'] = false;
+    keysPressed['arrowup'] = false;
+    keysPressed['arrowleft'] = false;
+    keysPressed['arrowdown'] = false;
+    keysPressed['arrowright'] = false;
+    
+    // Set the appropriate key based on the joystick direction
+    if (direction === 'up') {
+      keysPressed['w'] = true;
+      keysPressed['arrowup'] = true;
+    } else if (direction === 'left') {
+      keysPressed['a'] = true;
+      keysPressed['arrowleft'] = true;
+    } else if (direction === 'down') {
+      keysPressed['s'] = true;
+      keysPressed['arrowdown'] = true;
+    } else if (direction === 'right') {
+      keysPressed['d'] = true;
+      keysPressed['arrowright'] = true;
+    }
+  };
   
   // Set up key listeners
   useEffect(() => {
@@ -259,6 +307,21 @@ const GameCanvas = ({
     onLevelUp, camera // Add camera to dependencies
   ]);
 
+  // Handle touch-specific zoom actions
+  const handleZoomIn = () => {
+    setCamera(prev => ({
+      ...prev,
+      targetZoom: Math.min(prev.maxZoom, prev.targetZoom + 0.1)
+    }));
+  };
+  
+  const handleZoomOut = () => {
+    setCamera(prev => ({
+      ...prev,
+      targetZoom: Math.max(prev.minZoom, prev.targetZoom - 0.1)
+    }));
+  };
+
   return (
     <div className="relative">
       <canvas 
@@ -267,27 +330,32 @@ const GameCanvas = ({
         style={{ touchAction: 'none' }} // Prevents default touch actions for better mobile experience
       />
       
-      {/* Optional zoom controls for mobile */}
-      <div className="absolute bottom-4 right-4 flex gap-2">
-        <button 
-          className="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center"
-          onClick={() => setCamera(prev => ({
-            ...prev,
-            targetZoom: Math.min(prev.maxZoom, prev.targetZoom + 0.1)
-          }))}
-        >
-          +
-        </button>
-        <button 
-          className="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center"
-          onClick={() => setCamera(prev => ({
-            ...prev,
-            targetZoom: Math.max(prev.minZoom, prev.targetZoom - 0.1)
-          }))}
-        >
-          -
-        </button>
-      </div>
+      {/* Zoom controls (always shown on desktop) */}
+      {!isMobile && (
+        <div className="absolute bottom-4 right-4 flex gap-2">
+          <button 
+            className="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center"
+            onClick={handleZoomIn}
+          >
+            +
+          </button>
+          <button 
+            className="bg-gray-800 text-white rounded-full w-10 h-10 flex items-center justify-center"
+            onClick={handleZoomOut}
+          >
+            -
+          </button>
+        </div>
+      )}
+      
+      {/* Touch controls (only shown when playing on mobile) */}
+      {isMobile && gameState === 'playing' && (
+        <TouchControls 
+          onDirectionChange={handleTouchDirectionChange}
+          onZoomIn={handleZoomIn}
+          onZoomOut={handleZoomOut}
+        />
+      )}
     </div>
   );
 };

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GameCanvas from './GameCanvas';
 import UpgradeMenu from './UI/UpgradeMenu';
-import StageInfo from './UI/StageInfo';
 import GameOverScreen from './UI/GameOverScreen';
 import MainMenu from './UI/MainMenu';
 import PauseMenu from './UI/PauseMenu';
+import MobilePauseButton from './UI/MobilePauseButton';
 import { allUpgrades, selectRandomUpgrades, stageConfigs } from '../game/config';
 
 const Game = () => {
@@ -20,6 +20,7 @@ const Game = () => {
   const [upgradeOptions, setUpgradeOptions] = useState([]);
   const [stageMessage, setStageMessage] = useState('');
   const [showStageMessage, setShowStageMessage] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [playerStats, setPlayerStats] = useState({
     health: 150,
     maxHealth: 150,
@@ -36,6 +37,54 @@ const Game = () => {
     targetZoom: 1,         // Target zoom (for smooth transitions)
     zoomSpeed: 0.05,       // How quickly zoom changes
   });
+
+  // Detect mobile devices
+  useEffect(() => {
+    const checkMobile = () => {
+      const ua = navigator.userAgent;
+      setIsMobile(/iPhone|iPad|iPod|Android/i.test(ua));
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+
+  // Set meta viewport for mobile devices - Using useEffect without causing linting errors
+  React.useEffect(() => {
+    if (isMobile) {
+      // Find existing viewport meta or create one
+      let viewportMeta = document.querySelector('meta[name="viewport"]');
+      
+      if (!viewportMeta) {
+        viewportMeta = document.createElement('meta');
+        viewportMeta.name = 'viewport';
+        document.head.appendChild(viewportMeta);
+      }
+      
+      // Set content to prevent pinch zooming for better game experience
+      viewportMeta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+      
+      // Prevent document scrolling on touch devices
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      document.body.style.touchAction = 'none';
+      
+      return () => {
+        viewportMeta.content = 'width=device-width, initial-scale=1.0';
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.height = '';
+        document.body.style.touchAction = '';
+      };
+    }
+  }, [isMobile]);
 
   const startGame = () => {
     setGameState('playing');
@@ -58,18 +107,27 @@ const Game = () => {
       cooldown: 0.8,
       regeneration: 1
     });
-    // Set camera to zoomed-out Vampire Survivors style
+    
+    // Adjust initial zoom based on device type
+    const targetZoom = isMobile ? 0.5 : 0.65; // More zoomed out on mobile for better view
+    
     setCamera({
-      zoom: 0.65,          // Start at the target zoom
-      minZoom: 0.4,        // Maximum zoom out
-      maxZoom: 1.5,        // Maximum zoom in
-      targetZoom: 0.65,    // Default zoom level (Vampire Survivors style)
-      zoomSpeed: 0.05,     // How quickly zoom changes
+      zoom: targetZoom,       // Start at the target zoom
+      minZoom: 0.4,           // Maximum zoom out
+      maxZoom: 1.5,           // Maximum zoom in
+      targetZoom: targetZoom, // Default zoom level (adjusted for device)
+      zoomSpeed: 0.05,        // How quickly zoom changes
     });
   };
 
   const resumeGame = () => {
     setGameState('playing');
+  };
+
+  const pauseGame = () => {
+    if (gameState === 'playing') {
+      setGameState('paused');
+    }
   };
 
   const selectUpgrade = (upgrade) => {
